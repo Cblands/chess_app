@@ -15,3 +15,5 @@ def create_app():
         app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
 
     return app
+
+create_app()
