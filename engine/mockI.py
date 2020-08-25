@@ -146,7 +146,7 @@ def play_chess(board_fen):
 	board.push(move)
 
 	if board.is_game_over():
-
+		message = ''
 		message = message(board)
 
 		if board.result() == "0-1":
@@ -158,5 +158,5 @@ def play_chess(board_fen):
 		else:
 			return board, "Result is undetermined.", message
 	else:
-		return board.fen(), 'continuing', 'next move'
+		return str(move), 'continuing', 'next move'
 
