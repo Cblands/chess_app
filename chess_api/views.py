@@ -3,7 +3,7 @@ import engine.mockI as engine
 
 main = Blueprint('main', __name__)
 
-@main.route('/submit_move', methods={'POST'})
+@main.route('/api/submit_move', methods={'POST'})
 def submit_move():
 
     board = ''

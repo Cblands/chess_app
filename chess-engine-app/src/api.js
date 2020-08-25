@@ -1,7 +1,7 @@
 
 async function post_board(board) {
         const content = {'board' : board}
-        let response = await fetch("/submit_move", {
+        let response = await fetch("/api/submit_move", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

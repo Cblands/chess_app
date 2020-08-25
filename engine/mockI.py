@@ -141,7 +141,6 @@ def play_chess(board_fen):
 	board = chess.Board(board_fen)
 
 	value, move = find_best_move_AB(board, board.turn, 4)
-	print(value, move)
 
 	board.push(move)
 
