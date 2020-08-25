@@ -21,13 +21,18 @@ class Board extends Component {
     // currently clicked square
     square: "",
     // array of past game moves
-    history: [],
-    // color of the user
-    userColor: 'w'
+    history: []
   };
 
   componentDidMount() {
     this.game = new Chess();
+    this.checkOrientation();
+  }
+
+  checkOrientation = () => {
+    if(this.props.userColor.userColor === 'b'){
+      this.aiPlay()
+    }
   }
 
   // keep clicked square style and remove hint squares
@@ -64,7 +69,7 @@ class Board extends Component {
     }));
   };
 
-  onDrop = async ({ sourceSquare, targetSquare }) => {
+  onDrop = ({ sourceSquare, targetSquare }) => {
     // see if the move is legal
     let move = this.game.move({
       from: sourceSquare,
@@ -80,6 +85,11 @@ class Board extends Component {
       squareStyles: squareStyling({ pieceSquare, history })
     }));
 
+    this.aiPlay();
+
+  };
+
+  aiPlay = async () => {
     let response = await post_board(this.game.fen())
 
     let ai_move = this.game.move(response.board, {
@@ -92,8 +102,7 @@ class Board extends Component {
       history: this.game.history({ verbose: true }),
       squareStyles: squareStyling({ pieceSquare, history })
     }));
-
-  };
+  }
 
   onMouseOverSquare = square => {
     // get list of possible moves for this square
@@ -107,7 +116,7 @@ class Board extends Component {
 
     let squaresToHighlight = [];
     for (var i = 0; i < moves.length; i++) {
-      if(moves[i].color !== this.state.userColor) return;
+      if(moves[i].color !== this.props.userColor.userColor) return;
       squaresToHighlight.push(moves[i].to);
     }
 
@@ -141,10 +150,11 @@ class Board extends Component {
   }
 }
 
-export default function Game() {
+export default function Game(userColor) {
+
   return (
     <div>
-      <Board>
+      <Board userColor={userColor}>
         {({
           position,
           onDrop,
@@ -152,12 +162,13 @@ export default function Game() {
           onMouseOutSquare,
           squareStyles,
           dropSquareStyle,
-          onDragOverSquare,
+          onDragOverSquare
         }) => (
             <Chessboard
               id="board"
               width={320}
               position={position}
+              orientation={userColor.userColor === 'w' ? 'white' : 'black'}
               onDrop={onDrop}
               onMouseOverSquare={onMouseOverSquare}
               onMouseOutSquare={onMouseOutSquare}
