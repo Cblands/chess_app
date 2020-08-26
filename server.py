@@ -1,7 +1,7 @@
 from flask import Flask
 import os
 
-application = Flask(__name__, static_folder='./build', static_url_path='/')
+application = Flask(__name__, static_folder='./chess-engine-app/build', static_url_path='/')
 
 @application.route('/')
 def index():
