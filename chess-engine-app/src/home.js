@@ -57,7 +57,6 @@ class Home extends React.Component {
       winner: '',
       message: ''
     })
-    console.log('replay')
   }
 
   render() {

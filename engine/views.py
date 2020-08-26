@@ -13,7 +13,7 @@ def submit_move():
     return jsonify({
         'board' : board,
         'match_status': match_status,
-        'messsage': messsage
+        'message': messsage
         })
 
 @main.route('/start_game', methods={'PUT'})

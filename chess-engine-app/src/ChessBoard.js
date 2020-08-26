@@ -5,7 +5,6 @@ import Chess from "chess.js";
 
 import { post_board } from './api';
 import { toast } from 'react-toastify';
-import { Dimmer } from 'semantic-ui-react';
 
 // Segments of the code below were obtained from the chessboard.jsx demo. https://chessboardjsx.com/
 
