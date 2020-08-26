@@ -4,6 +4,8 @@ import Chessboard from "chessboardjsx";
 import Chess from "chess.js";
 
 import { post_board } from './api';
+import { toast } from 'react-toastify';
+import { Dimmer } from 'semantic-ui-react';
 
 // Segments of the code below were obtained from the chessboard.jsx demo. https://chessboardjsx.com/
 
@@ -30,7 +32,7 @@ class Board extends Component {
   }
 
   checkOrientation = () => {
-    if(this.props.userColor.userColor === 'b'){
+    if (this.props.userColor === 'b') {
       this.aiPlay()
     }
   }
@@ -90,18 +92,24 @@ class Board extends Component {
   };
 
   aiPlay = async () => {
-    let response = await post_board(this.game.fen())
+    try {
+      let response = await post_board(this.game.fen())
+      let ai_move = this.game.move(response.board, {
+        sloppy: true
+      });
 
-    let ai_move = this.game.move(response.board, {
-      sloppy: true
-    });
+      if (ai_move === null) return;
+      this.setState(({ history, pieceSquare }) => ({
+        fen: this.game.fen(),
+        history: this.game.history({ verbose: true }),
+        squareStyles: squareStyling({ pieceSquare, history })
+      }));
 
-    if (ai_move === null) return;
-    this.setState(({ history, pieceSquare }) => ({
-      fen: this.game.fen(),
-      history: this.game.history({ verbose: true }),
-      squareStyles: squareStyling({ pieceSquare, history })
-    }));
+      if (response.match_status !== 'continuing') this.handleMatchEnd(response);
+    } catch (e) {
+      toast.error("Uh oh! Harold couldn't handle the pressure... Try refreshing")
+    }
+
   }
 
   onMouseOverSquare = square => {
@@ -116,7 +124,7 @@ class Board extends Component {
 
     let squaresToHighlight = [];
     for (var i = 0; i < moves.length; i++) {
-      if(moves[i].color !== this.props.userColor.userColor) return;
+      if (moves[i].color !== this.props.userColor) return;
       squaresToHighlight.push(moves[i].to);
     }
 
@@ -135,55 +143,64 @@ class Board extends Component {
     });
   };
 
+  handleMatchEnd = (response) => {
+    this.props.handleMatchEnd(response);
+  }
+
   render() {
     const { fen, dropSquareStyle, squareStyles } = this.state;
 
-    return this.props.children({
-      squareStyles,
-      position: fen,
-      onMouseOverSquare: this.onMouseOverSquare,
-      onMouseOutSquare: this.onMouseOutSquare,
-      onDrop: this.onDrop,
-      dropSquareStyle,
-      onDragOverSquare: this.onDragOverSquare,
-    });
+    return (
+      this.props.children({
+        squareStyles,
+        position: fen,
+        onMouseOverSquare: this.onMouseOverSquare,
+        onMouseOutSquare: this.onMouseOutSquare,
+        onDrop: this.onDrop,
+        dropSquareStyle,
+        onDragOverSquare: this.onDragOverSquare,
+      })
+    );
   }
 }
 
-export default function Game(userColor) {
+export default class Game extends React.Component{
 
-  return (
-    <div>
-      <Board userColor={userColor}>
-        {({
-          position,
-          onDrop,
-          onMouseOverSquare,
-          onMouseOutSquare,
-          squareStyles,
-          dropSquareStyle,
-          onDragOverSquare
-        }) => (
-            <Chessboard
-              id="board"
-              width={320}
-              position={position}
-              orientation={userColor.userColor === 'w' ? 'white' : 'black'}
-              onDrop={onDrop}
-              onMouseOverSquare={onMouseOverSquare}
-              onMouseOutSquare={onMouseOutSquare}
-              boardStyle={{
-                borderRadius: "5px",
-                boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
-              }}
-              squareStyles={squareStyles}
-              dropSquareStyle={dropSquareStyle}
-              onDragOverSquare={onDragOverSquare}
-            />
-          )}
-      </Board>
-    </div>
-  );
+  render() {
+    return (
+      <div>
+        <Board userColor={this.props.userColor} handleMatchEnd={this.props.handleMatchEnd}>
+          {({
+            position,
+            onDrop,
+            onMouseOverSquare,
+            onMouseOutSquare,
+            squareStyles,
+            dropSquareStyle,
+            onDragOverSquare
+          }) => (
+              <Chessboard
+                id="board"
+                width={320}
+                position={position}
+                orientation={this.props.userColor === 'w' ? 'white' : 'black'}
+                onDrop={onDrop}
+                onMouseOverSquare={onMouseOverSquare}
+                onMouseOutSquare={onMouseOutSquare}
+                boardStyle={{
+                  borderRadius: "5px",
+                  boxShadow: `0 5px 15px rgba(0, 0, 0, 0.5)`
+                }}
+                squareStyles={squareStyles}
+                dropSquareStyle={dropSquareStyle}
+                onDragOverSquare={onDragOverSquare}
+              />
+            )}
+        </Board>
+      </div>
+    );
+  }
+
 }
 
 const squareStyling = ({ pieceSquare, history }) => {

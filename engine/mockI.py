@@ -139,7 +139,7 @@ def message(board):
 
 
 def play_chess(board_fen):
-	
+
 	board = chess.Board(board_fen)
 	value, move = find_best_move_AB(board, board.turn, 4)
 	board.push(move)
@@ -149,9 +149,9 @@ def play_chess(board_fen):
 		game_message = message(board)
 
 		if board.result() == "0-1" or board.result() == "1-0" or board.result() == "1/2-1/2":
-			return board, board.result(), game_message
+			return str(move), str(board.result()), game_message
 		else:
-			return board, "Result is undetermined.", game_message
+			return str(move), "Result is undetermined.", game_message
 	else:
 		return str(move), 'continuing', 'next move'
 
