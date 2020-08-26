@@ -135,27 +135,23 @@ def message(board):
 	if board.is_fivefold_repetition():
 		message = "Position occurred for 5th time"
 
+	return message
+
 
 def play_chess(board_fen):
-
+	
 	board = chess.Board(board_fen)
-
 	value, move = find_best_move_AB(board, board.turn, 4)
-
 	board.push(move)
 
 	if board.is_game_over():
-		message = ''
-		message = message(board)
+		game_message = ''
+		game_message = message(board)
 
-		if board.result() == "0-1":
-			return board, "Player wins.", message
-		elif board.result() == "1-0":
-			return board, "AI wins.", message
-		elif board.result() == "1/2-1/2":
-			return board, "The match results in a draw.", message
+		if board.result() == "0-1" or board.result() == "1-0" or board.result() == "1/2-1/2":
+			return board, board.result(), game_message
 		else:
-			return board, "Result is undetermined.", message
+			return board, "Result is undetermined.", game_message
 	else:
 		return str(move), 'continuing', 'next move'
 
