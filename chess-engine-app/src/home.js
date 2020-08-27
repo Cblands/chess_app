@@ -25,14 +25,14 @@ class Home extends React.Component {
 
   handleMatchEnd = (response) => {
     let winner = ''
-    if(response.match_status === '1-0') {
+    if (response.match_status === '1-0') {
       winner = 'w';
-    } else if (response.match_status === '0-1'){
+    } else if (response.match_status === '0-1') {
       winner = 'b';
     } else {
       winner = 'draw';
     }
-    this.setState({ 
+    this.setState({
       endGameModal: true,
       winner: winner,
       message: response.message,
@@ -42,7 +42,7 @@ class Home extends React.Component {
   handleHeader = (winner) => {
     if (winner === this.state.userColor) {
       return "Congratulations! You bested Harold the Chess Engine";
-    } else if (winner === 'b' || winner === 'w'){
+    } else if (winner === 'b' || winner === 'w') {
       return "Too bad, you were no match for Harold.";
     } else {
       return "Game Over";
@@ -50,7 +50,7 @@ class Home extends React.Component {
   }
 
   handleReplayClick = () => {
-    this.setState({ 
+    this.setState({
       dimmerActive: !this.state.dimmerActive,
       userColor: '',
       endGameModal: false,
@@ -65,11 +65,14 @@ class Home extends React.Component {
     return (
       <div>
         <Segment compact padded='very' color='grey' inverted size='massive'>
-          <Dimmer active={dimmerActive } page />
+          <Dimmer active={dimmerActive} page />
           {dimmerActive ?
             <Modal open={dimmerActive}>
               <Header> Welcome to Harold the Chess Engine </Header>
               <Modal.Content>
+                <p>
+                  Harold was developed by Julian, Ryan and Conor as part of a term project for ECE 470 at the University of Victoria. Enjoy!
+                </p>
                 <p>
                   Please select your colour to begin playing:
                 </p>
@@ -93,9 +96,9 @@ class Home extends React.Component {
               </Modal.Content>
               <Modal.Actions>
                 <Button positive onClick={() => this.handleReplayClick()}>Play Again!</Button>
-                <Button negative onClick={() => this.setState({ endGameModal: false})}>Close</Button>
+                <Button negative onClick={() => this.setState({ endGameModal: false })}>Close</Button>
               </Modal.Actions>
-            </Modal> : "" }
+            </Modal> : ""}
           <ToastContainer />
         </Segment>
       </div>
